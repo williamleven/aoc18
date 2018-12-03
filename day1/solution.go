@@ -1,16 +1,15 @@
 package day1
 
 import (
-	"github.com/Gurgy/aoc18"
 	"fmt"
+	"github.com/Gurgy/aoc18"
 	"strconv"
 )
 
 var Solutions = aoc18.Day{
-	A:  a,
-	B:  b,
+	A: a,
+	B: b,
 }
-
 
 func a() interface{} {
 	f := 0

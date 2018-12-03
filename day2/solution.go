@@ -1,15 +1,14 @@
 package day2
 
 import (
-	"github.com/Gurgy/aoc18"
 	"fmt"
+	"github.com/Gurgy/aoc18"
 )
 
 var Solutions = aoc18.Day{
-	A:  a,
-	B:  b,
+	A: a,
+	B: b,
 }
-
 
 func a() interface{} {
 	c, err := aoc18.GetLines("day2/input")
