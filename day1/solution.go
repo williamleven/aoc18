@@ -30,17 +30,28 @@ func a() interface{} {
 	return f
 }
 
+func getValues() ([]int, error) {
+	c, err := aoc18.GetLines("day1/input")
+	if err != nil {
+		return nil, err
+	}
+	values := make([]int, 0, 1000)
+	for line := range c {
+		value, _ := strconv.Atoi(line)
+		values = append(values, value)
+	}
+	return values, nil
+}
+
 func b() interface{} {
 	f := 0
 	fs := map[int]bool{0: true}
+	values, err := getValues()
+	if err != nil {
+		return err
+	}
 	for {
-		c, err := aoc18.GetLines("day1/input")
-		if err != nil {
-			return err
-		}
-		for line := range c {
-			value, _ := strconv.Atoi(line)
-
+		for _, value := range values {
 			f += value
 
 			if fs[f] == true {
@@ -48,7 +59,6 @@ func b() interface{} {
 			} else {
 				fs[f] = true
 			}
-
 		}
 	}
 	return fmt.Errorf("unreachable")
