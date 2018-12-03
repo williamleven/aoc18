@@ -2,19 +2,21 @@ package main
 
 import (
 	"fmt"
-	"time"
 	"github.com/Gurgy/aoc18"
 	"github.com/Gurgy/aoc18/day1"
 	"github.com/Gurgy/aoc18/day2"
+	"github.com/Gurgy/aoc18/day3"
+	"time"
 )
 
 var days = map[int]aoc18.Day{
 	1: day1.Solutions,
 	2: day2.Solutions,
+	3: day3.Solutions,
 }
 
 func main() {
-	for id, day := range days  {
+	for id, day := range days {
 		printDay(id, day)
 	}
 }
