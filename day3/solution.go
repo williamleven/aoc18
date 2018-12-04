@@ -30,9 +30,9 @@ func getClaims(lines chan string) []claim {
 }
 
 func parseClaim(string string) claim {
-	var cl claim
-	fmt.Fscanf(strings.NewReader(string), "#%d @ %d,%d: %dx%d", &cl.id, &cl.x, &cl.y, &cl.xs, &cl.ys)
-	return cl
+	var claim claim
+	fmt.Fscanf(strings.NewReader(string), "#%d @ %d,%d: %dx%d", &claim.id, &claim.x, &claim.y, &claim.xs, &claim.ys)
+	return claim
 }
 
 func plotClaims(claims []claim) [1000][1000]int {
