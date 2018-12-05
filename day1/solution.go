@@ -13,7 +13,7 @@ var Solutions = aoc18.Day{
 
 func a() interface{} {
 	f := 0
-	c, err := aoc18.GetLines("day1/input")
+	c, err := aoc18.GetLinesStream("day1/input")
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func a() interface{} {
 }
 
 func getValues() ([]int, error) {
-	c, err := aoc18.GetLines("day1/input")
+	c, err := aoc18.GetLinesStream("day1/input")
 	if err != nil {
 		return nil, err
 	}

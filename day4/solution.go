@@ -98,7 +98,7 @@ func (g guards) sleptMostAt(minute int) (int, int) {
 }
 
 func getGuards() guards {
-	c, err := aoc18.GetLines("day4/input")
+	c, err := aoc18.GetLinesStream("day4/input")
 	if err != nil {
 		panic(err)
 	}

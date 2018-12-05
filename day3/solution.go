@@ -50,7 +50,7 @@ func plotClaims(claims []claim) [1000][1000]int {
 }
 
 func a() interface{} {
-	c, err := aoc18.GetLines("day3/input")
+	c, err := aoc18.GetLinesStream("day3/input")
 	if err != nil {
 		panic(err)
 	}
@@ -70,7 +70,7 @@ func a() interface{} {
 }
 
 func b() interface{} {
-	c, err := aoc18.GetLines("day3/input")
+	c, err := aoc18.GetLinesStream("day3/input")
 	if err != nil {
 		panic(err)
 	}
