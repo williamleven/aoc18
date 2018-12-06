@@ -33,17 +33,58 @@ func (c coordinate) _getArea(cs coordinates, current coordinate, visited *coordi
 	if visited.contains(current) {
 		return 0
 	} else {
-		if closest, _ := cs.closesTo(current); closest != nil && c.equals(*closest) {
+		closest, _, err := cs.closesTo(current)
+		if  err == nil && c.equals(closest) {
 			*visited = append(*visited, current)
 			area := 1
-			area += c._getArea(cs, coordinate{current.x+1, current.y+1}, visited)
-			area += c._getArea(cs, coordinate{current.x-1, current.y+1}, visited)
-			area += c._getArea(cs, coordinate{current.x+1, current.y-1}, visited)
-			area += c._getArea(cs, coordinate{current.x-1, current.y-1}, visited)
+			area += c._getArea(cs, coordinate{current.x+1, current.y}, visited)
+			area += c._getArea(cs, coordinate{current.x-1, current.y}, visited)
+			area += c._getArea(cs, coordinate{current.x, current.y-1}, visited)
+			area += c._getArea(cs, coordinate{current.x, current.y+1}, visited)
 			return area
 		} else {
 			return 0
 		}
+	}
+}
+
+func (cs coordinates) findAllWithin(distance int) int {
+	visited := make(coordinates, 0, 10000)
+	return cs._findAllWithin(distance, cs.findPointWithin(distance), &visited)
+}
+func (cs coordinates) _findAllWithin(distance int, current coordinate, visited *coordinates) int {
+	if visited.contains(current) {
+		return 0
+	} else if cs.totalDistanceTo(current) < distance {
+		*visited = append(*visited, current)
+		area := 1
+		area += cs._findAllWithin(distance, coordinate{current.x+1, current.y}, visited)
+		area += cs._findAllWithin(distance, coordinate{current.x-1, current.y}, visited)
+		area += cs._findAllWithin(distance, coordinate{current.x, current.y-1}, visited)
+		area += cs._findAllWithin(distance, coordinate{current.x, current.y+1}, visited)
+		return area
+	} else {
+		*visited = append(*visited, current)
+		return 0
+	}
+}
+
+func (cs coordinates) findPointWithin(distance int) coordinate {
+	lowBound, highBound := cs.outerBounds()
+	visited := make(coordinates, 0, 1000)
+	c, _ := cs._findPointWithin(distance,
+		coordinate{(lowBound.x + highBound.x) / 2, (lowBound.y + highBound.y) / 2},
+		&visited,
+	)
+	return c
+}
+func (cs coordinates) _findPointWithin(distance int, current coordinate, visited *coordinates) (coordinate, error) {
+	if visited.contains(current) {
+		return coordinate{0, 0}, fmt.Errorf("not found")
+	} else if cs.totalDistanceTo(current) < distance {
+		return current, nil
+	} else {
+		return coordinate{0, 0}, fmt.Errorf("not implemnted")
 	}
 }
 
@@ -91,7 +132,7 @@ func (cs coordinates) contains(other coordinate) bool {
 }
 
 // TODO some cache here
-func (cs coordinates) closesTo(point coordinate) (*coordinate, int) {
+func (cs coordinates) closesTo(point coordinate) (coordinate, int, error) {
 	closest := cs[0]
 	closestDistance := closest.distanceTo(point)
 	similar := false
@@ -106,13 +147,13 @@ func (cs coordinates) closesTo(point coordinate) (*coordinate, int) {
 		}
 	}
 	if similar {
-		return nil, closestDistance
+		return coordinate{0, 0}, closestDistance, fmt.Errorf("middle ground")
 	}
-	return &closest, closestDistance
+	return closest, closestDistance, nil
 }
 
 func getCoordinates() coordinates {
-	c, err := aoc18.GetLines("day6/sample")
+	c, err := aoc18.GetLines("day6/input")
 	if err != nil {
 		panic(err)
 	}
@@ -138,28 +179,38 @@ func getAllSquareBounds(low, high coordinate) (coordinates) {
 	return result
 }
 
-func a() interface{} {
-	coords := getCoordinates()
-	lowBound, highBound := coords.outerBounds()
+func (cs coordinates) getInvalidPoints() coordinates  {
+	lowBound, highBound := cs.outerBounds()
 	border := getAllSquareBounds(lowBound, highBound)
 	invalidPoints := make(coordinates, 0, 100)
 	for _, borderPoint := range border {
-		invalid, _ := coords.closesTo(borderPoint)
-		if invalid != nil {
-			if !invalidPoints.contains(*invalid) {
-				invalidPoints = append(invalidPoints, *invalid)
+		invalid, _, err:= cs.closesTo(borderPoint)
+		if err == nil {
+			if !invalidPoints.contains(invalid) {
+				invalidPoints = append(invalidPoints, invalid)
 			}
 		}
 	}
+	return invalidPoints
+}
 
+func (cs coordinates) totalDistanceTo(point coordinate) int  {
+	sum := 0
+	for _, c := range cs {
+		sum += c.distanceTo(point)
+	}
+	return sum
+}
 
-	fmt.Println(invalidPoints)
+func a() interface{} {
+	coords := getCoordinates()
+
+	invalidPoints := coords.getInvalidPoints()
+
 	biggestArea := 0
 	for _, c := range coords {
 		if !invalidPoints.contains(c) {
-			fmt.Println(c)
 			area := c.getArea(coords)
-			fmt.Println(area)
 			if area > biggestArea {
 				biggestArea = area
 			}
@@ -169,5 +220,8 @@ func a() interface{} {
 }
 
 func b() interface{} {
-	return fmt.Errorf("not implemented")
+	cs := getCoordinates()
+
+	return cs.findAllWithin(10000)
+
 }
