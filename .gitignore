@@ -30,6 +30,10 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+# addons
+.idea/markdown-navigator/
+.idea/misc.xml
+
 # Generated files
 .idea/**/contentModel.xml
 

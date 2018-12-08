@@ -1,11 +1,9 @@
 package day8
 
 import (
-	"fmt"
 	"github.com/Gurgy/aoc18"
 	"strings"
 	"strconv"
-	"encoding/json"
 )
 
 var Solutions = aoc18.Day{
@@ -13,8 +11,8 @@ var Solutions = aoc18.Day{
 	B: b,
 }
 type node struct {
-	children []node `json:"children"`
-	metadata []int `json:"metadata"`
+	children []node
+	metadata []int
 }
 func parseTree(input []string) (node, []string, error) {
 	nNodes, err := strconv.Atoi(input[0])
@@ -29,8 +27,9 @@ func parseTree(input []string) (node, []string, error) {
 		children: make([]node, nNodes),
 		metadata: make([]int, nData),
 	}
+	input = input[2:]
 	for i := 0; i < len(head.children); i++   {
-		head.children[i], input, err = parseTree(input[2:])
+		head.children[i], input, err = parseTree(input)
 		if err != nil {
 			return node{}, nil, err
 		}
@@ -47,25 +46,54 @@ func parseTree(input []string) (node, []string, error) {
 	return head, input, nil
 }
 
+func (n node) sumOfMetaValues() int  {
+	sum := 0
+	for _, value := range n.metadata {
+		sum += value
+	}
+	return sum
+}
+
+func (n node) deepSumOfMetaValues() int  {
+	sum := n.sumOfMetaValues()
+	for _, child := range n.children  {
+		sum += child.deepSumOfMetaValues()
+	}
+	return sum
+}
+
+func (n node) valueOf() int {
+	if len(n.children) == 0 {
+		return n.sumOfMetaValues()
+	} else {
+		sum := 0
+		for _, value := range n.metadata {
+			if value > 0 && value <= len(n.children) {
+				sum += n.children[value-1].valueOf()
+			}
+		}
+		return sum
+	}
+}
+
 func a() interface{} {
-	lines, err := aoc18.GetLines("day8/sample")
+	lines, err := aoc18.GetLines("day8/input")
 	if err != nil {
 		panic(err)
 	}
 	line := lines[0]
 	entries := strings.Split(line, " ")
-	head, remaining, err := parseTree(entries)
-	if err != nil {
-		panic(err)
-	}
-	json, err := json.Marshal(head)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(json))
-	return remaining
+	head, _, err := parseTree(entries)
+	return head.deepSumOfMetaValues()
 }
 
 func b() interface{} {
-	return fmt.Errorf("not implemented")
+	lines, err := aoc18.GetLines("day8/input")
+	if err != nil {
+		panic(err)
+	}
+	line := lines[0]
+	entries := strings.Split(line, " ")
+	head, _, err := parseTree(entries)
+	return head.valueOf()
 }
