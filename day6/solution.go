@@ -50,28 +50,34 @@ func (c coordinate) _getArea(cs coordinates, current coordinate, visited *coordi
 
 func (cs coordinates) findAllWithin(distance int) int {
 	visited := make(coordinates, 0, 10000)
-	return cs._findAllWithin(distance, cs.findPointWithin(distance), &visited)
+	a,  _ := cs._findAllWithin(distance, cs.findPointWithin(distance), visited)
+	return a
 }
-func (cs coordinates) _findAllWithin(distance int, current coordinate, visited *coordinates) int {
+func (cs coordinates) _findAllWithin(distance int, current coordinate, visited coordinates) (int, coordinates) {
 	if visited.contains(current) {
-		return 0
+		return 0, visited
 	} else if cs.totalDistanceTo(current) < distance {
-		*visited = append(*visited, current)
+		visited = append(visited, current)
 		area := 1
-		area += cs._findAllWithin(distance, coordinate{current.x+1, current.y}, visited)
-		area += cs._findAllWithin(distance, coordinate{current.x-1, current.y}, visited)
-		area += cs._findAllWithin(distance, coordinate{current.x, current.y-1}, visited)
-		area += cs._findAllWithin(distance, coordinate{current.x, current.y+1}, visited)
-		return area
+		var a int
+		a, visited = cs._findAllWithin(distance, coordinate{current.x+1, current.y}, visited)
+		area += a
+		a, visited = cs._findAllWithin(distance, coordinate{current.x-1, current.y}, visited)
+		area += a
+		a, visited = cs._findAllWithin(distance, coordinate{current.x, current.y+1}, visited)
+		area += a
+		a, visited = cs._findAllWithin(distance, coordinate{current.x, current.y-1}, visited)
+		area += a
+		return area, visited
 	} else {
-		*visited = append(*visited, current)
-		return 0
+		visited = append(visited, current)
+		return 0, visited
 	}
 }
 
 func (cs coordinates) findPointWithin(distance int) coordinate {
 	lowBound, highBound := cs.outerBounds()
-	visited := make(coordinates, 0, 1000)
+	visited := make(coordinates, 0, 100)
 	c, _ := cs._findPointWithin(distance,
 		coordinate{(lowBound.x + highBound.x) / 2, (lowBound.y + highBound.y) / 2},
 		&visited,
@@ -160,7 +166,7 @@ func getCoordinates() coordinates {
 	
 	result := make([]coordinate, 0, 100)
 	
-	for line := range c {
+	for _, line := range c {
 		coordinate := coordinate{}
 		fmt.Fscanf(strings.NewReader(line), "%d, %d", &coordinate.x, &coordinate.y)
 		result = append(result, coordinate)

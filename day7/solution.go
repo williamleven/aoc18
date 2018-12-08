@@ -91,8 +91,8 @@ func b() interface{} {
 
 	var solution []uint8
 	workers := make(map[uint8]int)
-
-	for i := 0; len(ps) > 0; i++ {
+	i := 0
+	for ; len(ps) > 0; i++ {
 		// clear upp workers
 		for key := range workers {
 			if workers[key] == i {
@@ -106,12 +106,10 @@ func b() interface{} {
 		for j := 0; j < len(av) && len(workers) < 5; j++ {
 			_, working := workers[av[j]]
 			if !working {
-				done := (i - 1) + (int(av[j]) - 64) + 60
+				done := i + (int(av[j]) - 64) + 60 // 60 time units delat
 				workers[av[j]] = done
 			}
 		}
-		ps = ps.complete(av[0])
-		solution = append(solution, av[0])
 	}
-	return string(solution)
+	return i-1 // -1 because nothing is done in the last step of the loop
 }
