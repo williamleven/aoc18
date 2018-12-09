@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 	"github.com/Gurgy/aoc18"
-	"github.com/Gurgy/aoc18/day8"
+	"github.com/Gurgy/aoc18/day9"
 )
 
 var days = map[int]aoc18.Day{
@@ -13,7 +13,7 @@ var days = map[int]aoc18.Day{
 	//3: day3.Solutions,
 	//4: day4.Solutions,
 	//5: day5.Solutions,
-	8: day8.Solutions,
+	9: day9.Solutions,
 }
 
 func main() {
